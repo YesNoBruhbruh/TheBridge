@@ -6,6 +6,7 @@ public final class BridgePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
     }
 
     @Override
