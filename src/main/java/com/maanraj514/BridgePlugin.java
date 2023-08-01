@@ -1,15 +1,13 @@
 package com.maanraj514;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-public final class BridgePlugin extends JavaPlugin {
+public final class BridgePlugin extends Okmeta {
 
     @Override
-    public void onEnable() {
+    public void enable() {
         saveDefaultConfig();
     }
 
     @Override
-    public void onDisable() {
+    public void disable() {
     }
 }
