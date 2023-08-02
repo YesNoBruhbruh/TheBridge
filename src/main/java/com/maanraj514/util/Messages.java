@@ -16,6 +16,8 @@ public class Messages {
     public static String ERROR_GAME_STATE_ENDED = color("&cGAME HAS ENDED");
     public static String ERROR_GAME_PLAYER_NOT_FOUND = color("&cPLAYER NOT FOUND");
     public static String ERROR_GAME_FULL = color("&cGAME IS FULL");
+    public static String ERROR_SLIME_PLUGIN_NULL = color("&cSLIMEWORLDMANAGAER DOES NOT EXIST");
+    public static String ERROR_SLIME_ERROR = color("&cSLIMEWORLDMANAGAER ERROR");
     public static String ERROR_IO = color("&cIO ERROR");
     public static String NULL = color("&cNULL");
 }

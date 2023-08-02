@@ -1,7 +1,8 @@
 package com.maanraj514;
 
+import com.infernalsuite.aswm.api.SlimePlugin;
 import com.maanraj514.game.GameManager;
-import com.maanraj514.map.GameDataDatabase;
+import com.maanraj514.database.GameDataDatabase;
 import com.maanraj514.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,11 +12,18 @@ import java.io.IOException;
 
 public final class BridgePlugin extends Okmeta {
 
+    private final SlimePlugin slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+
     private GameDataDatabase gameDataDatabase;
 
     @Override
     public void enable() {
         saveDefaultConfig();
+
+        if (this.slimePlugin == null){
+            getLogger().info(Messages.ERROR_SLIME_PLUGIN_NULL);
+            return;
+        }
 
         registerClasses();
 
@@ -46,6 +54,10 @@ public final class BridgePlugin extends Okmeta {
         }else{
             return getConfig().getLocation("lobby-location");
         }
+    }
+
+    public SlimePlugin getSlimePlugin() {
+        return slimePlugin;
     }
 
     public GameDataDatabase getGameDataDatabase() {

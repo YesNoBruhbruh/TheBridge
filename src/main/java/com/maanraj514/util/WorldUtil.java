@@ -1,52 +1,71 @@
 package com.maanraj514.util;
 
+import com.infernalsuite.aswm.api.exceptions.CorruptedWorldException;
+import com.infernalsuite.aswm.api.exceptions.NewerFormatException;
+import com.infernalsuite.aswm.api.exceptions.UnknownWorldException;
+import com.infernalsuite.aswm.api.exceptions.WorldLockedException;
+import com.infernalsuite.aswm.api.loaders.SlimeLoader;
+import com.infernalsuite.aswm.api.world.SlimeWorld;
+import com.infernalsuite.aswm.api.world.properties.SlimePropertyMap;
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.game.Game;
 import com.maanraj514.game.states.LoadingState;
-import com.maanraj514.map.LocalGameMap;
-import com.maanraj514.map.MapInterface;
 import org.bukkit.Bukkit;
-import org.bukkit.WorldCreator;
 
-import java.io.File;
+import java.io.IOException;
 
 public class WorldUtil {
 
+    private static int id = 0;
+
     public static void loadGameWorld(Game game, BridgePlugin plugin) {
-        File gameWorldsFolder = new File(plugin.getDataFolder().getAbsolutePath() + "/gameWorlds");
-        if (!gameWorldsFolder.exists()){
-            if (!gameWorldsFolder.mkdir()){
-                plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);
-            }
-            plugin.getLogger().info("Created gameWorlds folder. But nothing is inside so returning.");
-            return;
-        }
-
+        SlimeLoader loader = plugin.getSlimePlugin().getLoader("file");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-//            loadWorld(game.getMap(), plugin); not sure if this is needed.
+            try{
+                SlimeWorld world = plugin.getSlimePlugin().loadWorld(loader, game.getMap(), true, new SlimePropertyMap()).clone(game.getMap() + "-" + id);
 
-            // also if the world folder needs its uid.dat to be removed,
-            // make sure to do that automatically.
-            MapInterface map = new LocalGameMap(gameWorldsFolder, game.getMap(), true);
+                plugin.getSlimePlugin().loadWorld(world);
 
-            game.setWorld(map.getWorld());
-            game.setState(new LoadingState());
+                id++;
+
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                    game.setWorld(Bukkit.getWorld(world.getName()));
+                    game.setState(new LoadingState());
+                }, 40);
+
+            } catch (WorldLockedException | CorruptedWorldException | NewerFormatException | IOException | UnknownWorldException e) {
+                plugin.getLogger().info(Messages.ERROR_SLIME_ERROR);
+            }
         });
     }
 
     public static void loadWorld(String worldName, BridgePlugin plugin) {
-        if (worldExists(worldName)){
+        if (worldExists(worldName, plugin)){
             plugin.getLogger().info("World " + worldName + " already exists.");
             return;
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> new WorldCreator(worldName));
+        SlimeLoader loader = plugin.getSlimePlugin().getLoader("file");
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try{
+                SlimeWorld world = plugin.getSlimePlugin().loadWorld(loader, worldName, true, new SlimePropertyMap());
+
+                Bukkit.getScheduler().runTask(plugin, () -> plugin.getSlimePlugin().loadWorld(world));
+            } catch (WorldLockedException | CorruptedWorldException | NewerFormatException | UnknownWorldException | IOException e) {
+                plugin.getLogger().info(Messages.ERROR_SLIME_ERROR);
+            }
+        });
     }
 
     public static void unloadWorld(String name){
         Bukkit.unloadWorld(name, false);
     }
 
-    public static boolean worldExists(String name){
-        return Bukkit.getWorld(name) != null;
+    public static boolean worldExists(String name, BridgePlugin plugin){
+        SlimeLoader loader = plugin.getSlimePlugin().getLoader("file");
+        try {
+            return loader.worldExists(name);
+        } catch (IOException e) {
+            return true;
+        }
     }
 }

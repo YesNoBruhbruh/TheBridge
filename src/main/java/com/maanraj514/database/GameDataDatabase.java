@@ -1,4 +1,4 @@
-package com.maanraj514.map;
+package com.maanraj514.database;
 
 import com.google.gson.Gson;
 import com.maanraj514.BridgePlugin;

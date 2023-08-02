@@ -2,3 +2,5 @@ name: TheBridge
 version: '${project.version}'
 main: com.maanraj514.BridgePlugin
 api-version: '1.20'
+depend:
+  - SlimeWorldManager
