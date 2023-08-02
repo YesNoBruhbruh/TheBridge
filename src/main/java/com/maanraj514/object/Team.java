@@ -32,4 +32,8 @@ public class Team {
         section.set("portalLocationTwo", LocationUtil.locationToString(this.portalLocationTwo, false));
         section.set("color", color.toString().toUpperCase());
     }
+
+    public Location getSpawnLocation() {
+        return spawnLocation;
+    }
 }
