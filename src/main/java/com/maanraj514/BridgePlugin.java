@@ -21,7 +21,7 @@ public final class BridgePlugin extends Okmeta {
     }
 
     public void registerClasses() {
-        mapDatabase = new MapDatabase();
+        mapDatabase = new MapDatabase(this);
         new GameManager(this);
     }
 

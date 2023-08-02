@@ -58,7 +58,7 @@ public class Game {
             }
         },0, 10));
 
-        this.mapData = plugin.getMapDatabase().getMapData(this.map);
+        this.mapData = plugin.getMapDatabase().getMapData(this.map, plugin);
 
         WorldUtil.loadGameWorld(this, plugin);
     }

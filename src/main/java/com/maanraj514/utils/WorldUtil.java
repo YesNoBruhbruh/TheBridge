@@ -19,7 +19,14 @@ public class WorldUtil {
             // also if the world folder needs its uid.dat to be removed,
             // make sure to do that automatically.
 
-            File gamesFolder = new File(plugin.getDataFolder() + "\\games");
+            File gamesFolder = new File(plugin.getDataFolder() + "\\gameWorlds");
+            if (!gamesFolder.exists()){
+                if (!gamesFolder.mkdir()){
+                    plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);
+                }
+                plugin.getLogger().info("Created gameWorlds folder. But nothing is inside so returning.");
+                return;
+            }
             MapInterface map = new LocalGameMap(gamesFolder, game.getMap(), true);
 
             game.setWorld(map.getWorld());
