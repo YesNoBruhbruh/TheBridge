@@ -1,8 +1,6 @@
-package com.maanraj514.object;
+package com.maanraj514.model;
 
 import com.maanraj514.utils.LocationUtil;
-import com.maanraj514.utils.Messages;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

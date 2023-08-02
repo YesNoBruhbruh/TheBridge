@@ -1,50 +1,89 @@
 package com.maanraj514.map;
 
+import com.google.gson.Gson;
 import com.maanraj514.BridgePlugin;
-import com.maanraj514.object.GameData;
-import com.maanraj514.utils.Messages;
+import com.maanraj514.model.GameData;
+import com.maanraj514.utils.FileUtil;
+import com.maanraj514.util.Messages;
 
-import java.io.File;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-//TODO this is for getting the map data for the games.
-//TODO load all the mapData at startup and put them in the mapDataMap
 public class GameDataDatabase {
     private final BridgePlugin plugin;
 
     //         map      mapData
-    private Map<String, GameData> mapDataMap;
+    private final Map<String, GameData> gameDataMap;
+
+    private final File gameDataFolder;
 
     public GameDataDatabase(BridgePlugin plugin){
         this.plugin = plugin;
-        this.mapDataMap = new HashMap<>();
+        this.gameDataMap = new HashMap<>();
 
-        File mapData = new File(plugin.getDataFolder() + "\\mapData");
-        if (!mapData.exists()){
-            if (!mapData.mkdir()){
+        gameDataFolder = new File(plugin.getDataFolder().getAbsolutePath() + "/gameDataFolder");
+        if (!gameDataFolder.exists()){
+            if (!gameDataFolder.mkdir()){
                 plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);
             }
         }
-        //TODO use json to save the mapData and everything else
-
-        // make a for loop for all the files inside mapData and read the mapData inside
-        // every single one.
     }
 
-    public void saveData(GameData gameData){
-        // create a new json file and write the mapData inside
-        // dont forget to save and reload too.
+    public void saveData(GameData gameData) throws IOException {
+        Gson gson = new Gson();
+        File file = new File(gameDataFolder.getAbsolutePath() + "/" + gameData.getMap() + ".json");
+        file.getParentFile().mkdir();
+        file.createNewFile();
+        Writer writer = new FileWriter(file, false);
+        gson.toJson(gameData, writer);
+        writer.flush();
+        writer.close();
     }
 
     public GameData getData(String map){
-        // get the json file inside the mapData folder
-        // and return the data inside.
+        for (GameData gameData : this.gameDataMap.values()){
+            if (gameData.getMap().equalsIgnoreCase(map)){
+                return gameData;
+            }
+        }
         return null;
-        // use the map to get the mapData
     }
 
     public void deleteData(String map){
-        // delete the json file for mapData and delete it from the Map.
+        for (GameData gameData : this.gameDataMap.values()){
+            if (gameData.getMap().equalsIgnoreCase(map)){
+                this.gameDataMap.remove(gameData.getMap());
+                FileUtil.delete(new File(gameDataFolder.getAbsolutePath() + "/" + map + ".json"));
+                break;
+            }
+        }
+    }
+
+    public void saveAllData() throws IOException {
+        for (GameData gameData : this.gameDataMap.values()){
+            saveData(gameData);
+        }
+    }
+
+    public void loadAllData() throws FileNotFoundException {
+        if (gameDataFolder.listFiles() == null){
+            plugin.getLogger().info(Messages.NULL);
+            return;
+        }
+
+        Gson gson = new Gson();
+        for (File file : Objects.requireNonNull(gameDataFolder.listFiles())){
+            if (file.exists()){
+                Reader reader = new FileReader(file);
+                GameData gameData = gson.fromJson(reader, GameData.class);
+                this.gameDataMap.put(gameData.getMap(), gameData);
+            }
+        }
+    }
+
+    public Map<String, GameData> getGameDataMap(){
+        return this.gameDataMap;
     }
 }

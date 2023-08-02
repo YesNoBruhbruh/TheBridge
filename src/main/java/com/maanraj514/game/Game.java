@@ -2,11 +2,11 @@ package com.maanraj514.game;
 
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.game.states.*;
-import com.maanraj514.object.GameData;
-import com.maanraj514.object.Team;
+import com.maanraj514.model.GameData;
+import com.maanraj514.model.Team;
 import com.maanraj514.party.Party;
-import com.maanraj514.utils.Messages;
-import com.maanraj514.utils.WorldUtil;
+import com.maanraj514.util.Messages;
+import com.maanraj514.util.WorldUtil;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

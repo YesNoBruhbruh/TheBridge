@@ -1,7 +1,7 @@
 package com.maanraj514.map;
 
 import com.maanraj514.utils.FileUtil;
-import com.maanraj514.utils.Messages;
+import com.maanraj514.util.Messages;
 import org.bukkit.*;
 
 import java.io.File;

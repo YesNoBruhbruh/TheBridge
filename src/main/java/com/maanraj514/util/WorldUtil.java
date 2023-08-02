@@ -1,4 +1,4 @@
-package com.maanraj514.utils;
+package com.maanraj514.util;
 
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.game.Game;
@@ -13,7 +13,7 @@ import java.io.File;
 public class WorldUtil {
 
     public static void loadGameWorld(Game game, BridgePlugin plugin) {
-        File gameWorldsFolder = new File(plugin.getDataFolder() + "\\gameWorlds");
+        File gameWorldsFolder = new File(plugin.getDataFolder().getAbsolutePath() + "/gameWorlds");
         if (!gameWorldsFolder.exists()){
             if (!gameWorldsFolder.mkdir()){
                 plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);

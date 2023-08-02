@@ -1,4 +1,4 @@
-package com.maanraj514.utils;
+package com.maanraj514.util;
 
 import static com.maanraj514.utils.ColorUtil.color;
 
@@ -8,6 +8,7 @@ public class Messages {
     public static String ERROR_DIRECTORY_CREATION = color("&cFAILED TO CREATE DIRECTORY");
     public static String ERROR_FILE_CREATION = color("&cFAILED TO CREATE FILE");
     public static String ERROR_FILE_LOAD = color("&cFAILED TO LOAD FILE");
+    public static String ERROR_FILE_NOT_FOUND = color("&cFILE NOT FOUND");
     public static String ERROR_FILE_SAVE = color("&cFAILED TO SAVE FILE");
     public static String ERROR_GAME_LOAD = color("&cFAILED TO LOAD GAME");
     public static String ERROR_GAME_MAP_LOAD = color("&cFAILED TO LOAD GAME MAP");
@@ -15,5 +16,6 @@ public class Messages {
     public static String ERROR_GAME_STATE_ENDED = color("&cGAME HAS ENDED");
     public static String ERROR_GAME_PLAYER_NOT_FOUND = color("&cPLAYER NOT FOUND");
     public static String ERROR_GAME_FULL = color("&cGAME IS FULL");
+    public static String ERROR_IO = color("&cIO ERROR");
     public static String NULL = color("&cNULL");
 }
