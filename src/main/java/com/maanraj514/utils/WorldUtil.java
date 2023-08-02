@@ -13,21 +13,21 @@ import java.io.File;
 public class WorldUtil {
 
     public static void loadGameWorld(Game game, BridgePlugin plugin) {
+        File gameWorldsFolder = new File(plugin.getDataFolder() + "\\gameWorlds");
+        if (!gameWorldsFolder.exists()){
+            if (!gameWorldsFolder.mkdir()){
+                plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);
+            }
+            plugin.getLogger().info("Created gameWorlds folder. But nothing is inside so returning.");
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 //            loadWorld(game.getMap(), plugin); not sure if this is needed.
 
             // also if the world folder needs its uid.dat to be removed,
             // make sure to do that automatically.
-
-            File gamesFolder = new File(plugin.getDataFolder() + "\\gameWorlds");
-            if (!gamesFolder.exists()){
-                if (!gamesFolder.mkdir()){
-                    plugin.getLogger().info(Messages.ERROR_DIRECTORY_CREATION);
-                }
-                plugin.getLogger().info("Created gameWorlds folder. But nothing is inside so returning.");
-                return;
-            }
-            MapInterface map = new LocalGameMap(gamesFolder, game.getMap(), true);
+            MapInterface map = new LocalGameMap(gameWorldsFolder, game.getMap(), true);
 
             game.setWorld(map.getWorld());
             game.setState(new LoadingState());
