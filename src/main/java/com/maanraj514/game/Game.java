@@ -2,7 +2,7 @@ package com.maanraj514.game;
 
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.game.states.*;
-import com.maanraj514.object.MapData;
+import com.maanraj514.object.GameData;
 import com.maanraj514.object.Team;
 import com.maanraj514.party.Party;
 import com.maanraj514.utils.Messages;
@@ -32,7 +32,7 @@ public class Game {
 
     private final Map<UUID, FastBoard> scoreboards;
 
-    private final MapData mapData;
+    private final GameData gameData;
 
     private World world;
 
@@ -58,7 +58,7 @@ public class Game {
             }
         },0, 10));
 
-        this.mapData = plugin.getMapDatabase().getMapData(this.map);
+        this.gameData = plugin.getGameDataDatabase().getData(this.map);
 
         WorldUtil.loadGameWorld(this, plugin);
     }
@@ -104,7 +104,7 @@ public class Game {
         this.spectators.add(player.getUniqueId());
         player.getInventory().clear();
         player.setGameMode(org.bukkit.GameMode.SPECTATOR);
-        player.teleportAsync(mapData.getSpectatorSpawn());
+        player.teleportAsync(gameData.getSpectatorSpawn());
     }
 
     // used for removing someone from the game.

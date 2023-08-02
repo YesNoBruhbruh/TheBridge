@@ -1,13 +1,13 @@
 package com.maanraj514;
 
 import com.maanraj514.game.GameManager;
-import com.maanraj514.map.MapDatabase;
+import com.maanraj514.map.GameDataDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public final class BridgePlugin extends Okmeta {
 
-    private MapDatabase mapDatabase;
+    private GameDataDatabase gameDataDatabase;
 
     @Override
     public void enable() {
@@ -21,7 +21,7 @@ public final class BridgePlugin extends Okmeta {
     }
 
     public void registerClasses() {
-        mapDatabase = new MapDatabase(this);
+        gameDataDatabase = new GameDataDatabase(this);
         new GameManager(this);
     }
 
@@ -33,7 +33,7 @@ public final class BridgePlugin extends Okmeta {
         }
     }
 
-    public MapDatabase getMapDatabase() {
-        return mapDatabase;
+    public GameDataDatabase getGameDataDatabase() {
+        return gameDataDatabase;
     }
 }
