@@ -1,9 +1,11 @@
 package com.maanraj514.model;
 
 import com.maanraj514.game.GameMode;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import java.util.List;
+import java.util.Map;
 
 public class GameData {
 
@@ -15,14 +17,14 @@ public class GameData {
 
     private long lastEdit;
 
-    private final List<Team> teams;
+    private Map<ChatColor, Team> teams;
 
     private Location spectatorSpawn;
 
     private Location buildAbleCornerOne;
     private Location buildAbleCornerTwo;
 
-    public GameData(String map, GameMode gameMode, List<String> authors, long lastEdit, List<Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
+    public GameData(String map, GameMode gameMode, List<String> authors, long lastEdit, Map<ChatColor, Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
         this.map = map;
         this.gameMode = gameMode;
         this.authors = authors;
@@ -57,7 +59,7 @@ public class GameData {
         return lastEdit;
     }
 
-    public List<Team> getTeams() {
+    public Map<ChatColor, Team> getTeams() {
         return teams;
     }
 
@@ -79,5 +81,9 @@ public class GameData {
 
     public void setBuildAbleCornerTwo(Location buildAbleCornerTwo) {
         this.buildAbleCornerTwo = buildAbleCornerTwo;
+    }
+
+    public void setTeams(Map<ChatColor, Team> teams) {
+        this.teams = teams;
     }
 }

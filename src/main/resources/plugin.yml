@@ -4,3 +4,7 @@ main: com.maanraj514.BridgePlugin
 api-version: '1.20'
 depend:
   - SlimeWorldManager
+commands:
+  setup:
+    usage: /setup
+    description: Setup the a game

@@ -94,7 +94,7 @@
         <dependency>
             <groupId>com.github.YesNoBruhbruh</groupId>
             <artifactId>Okmeta-java</artifactId>
-            <version>af7f2e8b74</version>
+            <version>d9fac29dec</version>
         </dependency>
         <dependency>
             <groupId>fr.mrmicky</groupId>
@@ -111,6 +111,11 @@
             <groupId>com.flowpowered</groupId>
             <artifactId>flow-nbt</artifactId>
             <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
         </dependency>
     </dependencies>
 </project>

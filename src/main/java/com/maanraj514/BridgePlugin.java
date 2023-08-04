@@ -1,20 +1,25 @@
 package com.maanraj514;
 
 import com.infernalsuite.aswm.api.SlimePlugin;
+import com.maanraj514.command.PluginCommand;
 import com.maanraj514.game.GameManager;
 import com.maanraj514.database.GameDataDatabase;
+import com.maanraj514.setupwizard.WizardListener;
 import com.maanraj514.setupwizard.WizardManager;
 import com.maanraj514.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.reflections.Reflections;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public final class BridgePlugin extends Okmeta {
 
     private final SlimePlugin slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
+    private GameManager gameManager;
     private GameDataDatabase gameDataDatabase;
     private WizardManager wizardManager;
 
@@ -26,7 +31,8 @@ public final class BridgePlugin extends Okmeta {
             getLogger().info(Messages.ERROR_SLIME_PLUGIN_NULL);
             return;
         }
-
+        registerCommands();
+        registerListeners(new WizardListener(this));
         registerClasses();
 
         try{
@@ -47,8 +53,21 @@ public final class BridgePlugin extends Okmeta {
 
     public void registerClasses() {
         gameDataDatabase = new GameDataDatabase(this);
-        wizardManager = new WizardManager();
-        new GameManager(this);
+        wizardManager = new WizardManager(this);
+        gameManager = new GameManager(this);
+    }
+
+    public void registerCommands() {
+        for (Class<? extends PluginCommand> clazz : new Reflections("com.maanraj514.command.commands")
+                .getSubTypesOf(PluginCommand.class)){
+            try {
+                PluginCommand command = clazz.getDeclaredConstructor(this.getClass()).newInstance(this);
+                getCommand(command.getCommandInfo().name()).setExecutor(command);
+            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Location getLobbyLocation(){
@@ -69,5 +88,9 @@ public final class BridgePlugin extends Okmeta {
 
     public WizardManager getWizardManager() {
         return wizardManager;
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
     }
 }

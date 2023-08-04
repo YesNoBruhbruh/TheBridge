@@ -13,13 +13,13 @@ public class GameManager {
     private final Map<UUID, Game> games;
 
     public GameManager(BridgePlugin plugin){
-        this.plugin = plugin;
         this.games = new HashMap<>();
+        this.plugin = plugin;
     }
 
     public void createGame(String map, GameMode mode){
         UUID uuid = UUID.randomUUID();
-        this.games.put(uuid, new Game(map, mode, uuid, plugin));
+        this.games.put(uuid, new Game(map, uuid, plugin));
     }
 
     public void deleteGame(UUID uuid){
@@ -28,6 +28,15 @@ public class GameManager {
 
     public Game getGame(UUID uuid){
         return this.games.get(uuid);
+    }
+
+    public Game getGame(String map) {
+        for (Game game : this.games.values()) {
+            if (game.getMap().equalsIgnoreCase(map)) {
+                return game;
+            }
+        }
+        return null;
     }
 
     public Map<UUID, Game> getGames(){

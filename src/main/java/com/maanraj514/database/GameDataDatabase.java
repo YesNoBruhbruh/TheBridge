@@ -9,9 +9,9 @@ import com.maanraj514.util.Messages;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class GameDataDatabase {
+
     private final BridgePlugin plugin;
 
     //         map      mapData
@@ -79,13 +79,14 @@ public class GameDataDatabase {
 
     // recommended to keep this to 1 usage. (onEnable())
     public void loadAllData() throws FileNotFoundException {
-        if (gameDataFolder.listFiles() == null){
+        File[] files = gameDataFolder.listFiles();
+        if (files == null){
             plugin.getLogger().info(Messages.NULL);
             return;
         }
 
         Gson gson = new Gson();
-        for (File file : Objects.requireNonNull(gameDataFolder.listFiles())){
+        for (File file : files){
             if (file.exists()){
                 Reader reader = new FileReader(file);
                 GameData gameData = gson.fromJson(reader, GameData.class);

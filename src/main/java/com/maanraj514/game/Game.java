@@ -92,7 +92,7 @@ public class Game {
 
         this.scoreboards.put(player.getUniqueId(), board);
 
-        for (Team team : this.gameData.getTeams()){
+        for (Team team : this.gameData.getTeams().values()){
             // first we can check if the team already exists.
             if (this.teams.containsKey(team)){
                 // this means the team exists.

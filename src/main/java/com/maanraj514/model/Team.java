@@ -1,21 +1,20 @@
 package com.maanraj514.model;
 
-import com.maanraj514.utils.LocationUtil;
-import org.bukkit.Color;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.Objects;
 
 public class Team {
 
-    private final String name;
-    private final Location spawnLocation;
-    private final Location portalLocationOne;
-    private final Location portalLocationTwo;
-    private final Color color;
+    private String name;
+    private Location spawnLocation;
+    private Location portalLocationOne;
+    private Location portalLocationTwo;
+    private ChatColor color;
 
-    public Team(String name, Location spawnLocation, Location portalLocationOne, Location portalLocationTwo, Color color) {
+    public Team() {
+    }
+
+    public Team(String name, Location spawnLocation, Location portalLocationOne, Location portalLocationTwo, ChatColor color) {
         this.name = name;
         this.spawnLocation = spawnLocation;
         this.portalLocationOne = portalLocationOne;
@@ -23,27 +22,11 @@ public class Team {
         this.color = color;
     }
 
-    public Team(ConfigurationSection section){
-        this.name = section.getString("name");
-        this.spawnLocation = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("spawnLocation")));
-        this.portalLocationOne = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("portalLocationOne")));
-        this.portalLocationTwo = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("portalLocationTwo")));
-        this.color = section.getColor("color");
-    }
-
-    public void write(ConfigurationSection section){
-        section.set("name", name);
-        section.set("spawnLocation", LocationUtil.locationToString(this.spawnLocation, false));
-        section.set("portalLocationOne", LocationUtil.locationToString(this.portalLocationOne, false));
-        section.set("portalLocationTwo", LocationUtil.locationToString(this.portalLocationTwo, false));
-        section.set("color", color.toString().toUpperCase());
-    }
-
     public Location getSpawnLocation() {
         return spawnLocation;
     }
 
-    public Color getColor() {
+    public ChatColor getColor() {
         return color;
     }
 
@@ -53,5 +36,29 @@ public class Team {
 
     public Location getPortalLocationTwo() {
         return portalLocationTwo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+    }
+
+    public void setPortalLocationOne(Location portalLocationOne) {
+        this.portalLocationOne = portalLocationOne;
+    }
+
+    public void setPortalLocationTwo(Location portalLocationTwo) {
+        this.portalLocationTwo = portalLocationTwo;
+    }
+
+    public void setColor(ChatColor color) {
+        this.color = color;
     }
 }

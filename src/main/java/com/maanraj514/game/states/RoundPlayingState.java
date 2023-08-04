@@ -6,7 +6,6 @@ import com.maanraj514.utils.LocationUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
