@@ -1,7 +1,7 @@
 package com.maanraj514.model;
 
 import com.maanraj514.utils.LocationUtil;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -13,14 +13,14 @@ public class Team {
     private final Location spawnLocation;
     private final Location portalLocationOne;
     private final Location portalLocationTwo;
-    private final ChatColor color;
+    private final Color color;
 
     public Team(ConfigurationSection section){
         this.name = section.getString("name");
         this.spawnLocation = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("spawnLocation")));
         this.portalLocationOne = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("portalLocationOne")));
         this.portalLocationTwo = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("portalLocationTwo")));
-        this.color = ChatColor.valueOf(Objects.requireNonNull(section.getString("color")).toUpperCase());
+        this.color = section.getColor("color");
     }
 
     public void write(ConfigurationSection section){
@@ -33,5 +33,17 @@ public class Team {
 
     public Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Location getPortalLocationOne() {
+        return portalLocationOne;
+    }
+
+    public Location getPortalLocationTwo() {
+        return portalLocationTwo;
     }
 }

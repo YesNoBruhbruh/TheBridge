@@ -43,6 +43,9 @@ public class GameDataDatabase {
     }
 
     public GameData getData(String map){
+        if (this.gameDataMap.size() == 0){
+            return null;
+        }
         for (GameData gameData : this.gameDataMap.values()){
             if (gameData.getMap().equalsIgnoreCase(map)){
                 return gameData;
@@ -52,6 +55,9 @@ public class GameDataDatabase {
     }
 
     public void deleteData(String map){
+        if (this.gameDataMap.size() == 0){
+            return;
+        }
         for (GameData gameData : this.gameDataMap.values()){
             if (gameData.getMap().equalsIgnoreCase(map)){
                 this.gameDataMap.remove(gameData.getMap());
@@ -61,12 +67,17 @@ public class GameDataDatabase {
         }
     }
 
+    // recommended to keep this to 1 usage. (onDisable())
     public void saveAllData() throws IOException {
+        if (this.gameDataMap.size() == 0){
+            return;
+        }
         for (GameData gameData : this.gameDataMap.values()){
             saveData(gameData);
         }
     }
 
+    // recommended to keep this to 1 usage. (onEnable())
     public void loadAllData() throws FileNotFoundException {
         if (gameDataFolder.listFiles() == null){
             plugin.getLogger().info(Messages.NULL);
@@ -81,9 +92,5 @@ public class GameDataDatabase {
                 this.gameDataMap.put(gameData.getMap(), gameData);
             }
         }
-    }
-
-    public Map<String, GameData> getGameDataMap(){
-        return this.gameDataMap;
     }
 }

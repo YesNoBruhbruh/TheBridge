@@ -29,6 +29,7 @@ public class Game {
     private final Map<UUID, Team> players;
     private final Map<Team, Set<UUID>> teams;
     private final Set<UUID> spectators;
+    private Map<Team, Integer> score;
 
     private final Map<UUID, FastBoard> scoreboards;
 
@@ -51,12 +52,13 @@ public class Game {
         this.spectators = new HashSet<>();
         this.scoreboards = new HashMap<>();
         this.tasks = new ArrayList<>();
+        this.score = new HashMap<>();
 
         this.tasks.add(Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (FastBoard board : this.scoreboards.values()){
                 updateBoard(board);
             }
-        },0, 10));
+        },0, 20));
 
         this.gameData = plugin.getGameDataDatabase().getData(this.map);
 
@@ -72,11 +74,16 @@ public class Game {
             player.sendMessage(Messages.ERROR_GAME_STATE_ENDED);
             return;
         }
+        if (gameState instanceof RoundStartingState){
+            player.sendMessage(Messages.ERROR_GAME_STATE_ROUND_STARTING);
+            return;
+        }
         if (this.players.size() == this.gameMode.getMaxPlayers()){
             player.sendMessage(Messages.ERROR_GAME_FULL);
             return;
         }
 
+        player.setHealth(20.0);
         player.getInventory().clear();
         player.setGameMode(org.bukkit.GameMode.ADVENTURE);
 
@@ -107,36 +114,35 @@ public class Game {
         player.teleportAsync(gameData.getSpectatorSpawn());
     }
 
-    // used for removing someone from the game.
+    public void removePlayer(Player player){
+        this.players.remove(player.getUniqueId());
+        this.scoreboards.remove(player.getUniqueId()).delete();
 
-    // if we remove the player with the quit boolean to true, we remove them from the lists,
-    // hashmaps, and teleport them to the lobby. If the quit boolean is false, we just
-    // check for the winning team and set that.
-    public void removePlayer(Player player, boolean quit){
-        if (quit){
-            this.players.remove(player.getUniqueId());
-            this.scoreboards.remove(player.getUniqueId()).delete();
-            this.teams.remove(this.players.get(player.getUniqueId()));
-            this.spectators.remove(player.getUniqueId());
+        Team team = this.players.get(player.getUniqueId());
+        this.teams.get(team).remove(player.getUniqueId());
 
-            player.getInventory().clear();
-            player.setGameMode(org.bukkit.GameMode.SURVIVAL);
-            player.teleportAsync(plugin.getLobbyLocation());
-
-            if (gameState instanceof StartingState || gameState instanceof PlayingState){
-                broadcast(color("&a" + player.getName() + " has left the game! (" + players.size() + "/" + gameMode.getMaxPlayers() + ")"));
-            }
-
-            if (gameState instanceof StartingState && this.players.size() < gameMode.getMinPlayers()){
-                setState(new WaitingState());
-            }
+        if (this.teams.get(team).isEmpty()){
+            this.teams.remove(team);
         }
-        // this means they just died and didn't quit.
-        if (gameState instanceof PlayingState){
-            PlayingState playingState = (PlayingState) gameState;
-            playingState.getAliveTeams().remove(this.players.get(player.getUniqueId()));
-            if (playingState.getAliveTeams().size() == 1){
-                this.winnerTeam = playingState.getAliveTeams().keySet().stream().findFirst().orElse(null);
+
+        this.spectators.remove(player.getUniqueId());
+
+        player.getInventory().clear();
+        player.setGameMode(org.bukkit.GameMode.SURVIVAL);
+        player.teleportAsync(plugin.getLobbyLocation());
+
+        if (gameState instanceof StartingState || gameState instanceof RoundPlayingState || gameState instanceof RoundStartingState){
+            broadcast(color("&a" + player.getName() + " has left the game! (" + players.size() + "/" + gameMode.getMaxPlayers() + ")"));
+        }
+
+        if (gameState instanceof StartingState && this.players.size() < gameMode.getMinPlayers()){
+            setState(new WaitingState());
+        }
+
+        if (gameState instanceof RoundPlayingState){
+            // if everyone else left, end the game
+            if (teams.size() == 1){
+                this.winnerTeam = team;
                 setState(new EndedState());
             }
         }
@@ -182,9 +188,18 @@ public class Game {
 
     public List<String> getLines(){
         List<String> lines = new ArrayList<>();
+        lines.add(color("&a&lTest Line"));
         //TODO
         // check which state it is and put lines based on it.
         return lines;
+    }
+
+    public Map<Team, Set<UUID>> getTeams() {
+        return teams;
+    }
+
+    public Map<UUID, Team> getPlayers() {
+        return players;
     }
 
     public String getMap() {
@@ -193,5 +208,13 @@ public class Game {
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public Team getWinnerTeam() {
+        return winnerTeam;
+    }
+
+    public Map<Team, Integer> getScore() {
+        return score;
     }
 }
