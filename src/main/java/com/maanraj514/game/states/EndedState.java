@@ -6,7 +6,7 @@ public class EndedState extends GameState{
 
     @Override
     public void onEnable(BridgePlugin plugin) {
-        game.broadcast("&eGAME HAS ENDED!");
+        game.broadcast("&eGAME HAS ENDED! " + game.getWinnerTeam().getColor() + " WINS!");
     }
 
     @Override

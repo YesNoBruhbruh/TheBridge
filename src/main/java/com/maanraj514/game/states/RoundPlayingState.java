@@ -45,6 +45,7 @@ public class RoundPlayingState extends GameState {
                         if (!game.getTeams().get(team).contains(player.getUniqueId())){
                             game.getScore().put(playerTeam, game.getScore().get(playerTeam) + 1);
                             if (game.getScore().get(playerTeam) == 5){
+                                game.setWinnerTeam(playerTeam);
                                 game.setState(new EndedState());
                             } else {
                                 game.setState(new RoundStartingState());

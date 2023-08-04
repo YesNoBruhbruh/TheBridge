@@ -214,6 +214,10 @@ public class Game {
         return winnerTeam;
     }
 
+    public void setWinnerTeam(Team winnerTeam) {
+        this.winnerTeam = winnerTeam;
+    }
+
     public Map<Team, Integer> getScore() {
         return score;
     }

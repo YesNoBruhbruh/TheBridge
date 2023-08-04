@@ -12,10 +12,6 @@ public class RoundStartingState extends GameState{
     @Override
     public void onEnable(BridgePlugin plugin){
         this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if (game.getWinnerTeam() != null){
-                game.broadcast("&a" + game.getWinnerTeam().getColor() + " won the game!");
-                this.task.cancel();
-            }
             if (secondsUntilStart <= 0){
                 game.setState(new RoundPlayingState());
             }else{
