@@ -1,5 +1,6 @@
 package com.maanraj514.model;
 
+import com.maanraj514.game.GameMode;
 import org.bukkit.Location;
 
 import java.util.List;
@@ -8,19 +9,22 @@ public class GameData {
 
     private final String map;
 
+    private final GameMode gameMode;
+
     private final List<String> authors;
 
-    private final long lastEdit;
+    private long lastEdit;
 
     private final List<Team> teams;
 
-    private final Location spectatorSpawn;
+    private Location spectatorSpawn;
 
-    private final Location buildAbleCornerOne;
-    private final Location buildAbleCornerTwo;
+    private Location buildAbleCornerOne;
+    private Location buildAbleCornerTwo;
 
-    public GameData(String map, List<String> authors, long lastEdit, List<Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
+    public GameData(String map, GameMode gameMode, List<String> authors, long lastEdit, List<Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
         this.map = map;
+        this.gameMode = gameMode;
         this.authors = authors;
         this.lastEdit = lastEdit;
         this.teams = teams;
@@ -43,5 +47,37 @@ public class GameData {
 
     public Location getBuildAbleCornerTwo() {
         return buildAbleCornerTwo;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public long getLastEdit() {
+        return lastEdit;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setLastEdit(long lastEdit) {
+        this.lastEdit = lastEdit;
+    }
+
+    public void setSpectatorSpawn(Location spectatorSpawn) {
+        this.spectatorSpawn = spectatorSpawn;
+    }
+
+    public void setBuildAbleCornerOne(Location buildAbleCornerOne) {
+        this.buildAbleCornerOne = buildAbleCornerOne;
+    }
+
+    public void setBuildAbleCornerTwo(Location buildAbleCornerTwo) {
+        this.buildAbleCornerTwo = buildAbleCornerTwo;
     }
 }

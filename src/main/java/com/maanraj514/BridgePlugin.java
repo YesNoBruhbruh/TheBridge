@@ -3,6 +3,7 @@ package com.maanraj514;
 import com.infernalsuite.aswm.api.SlimePlugin;
 import com.maanraj514.game.GameManager;
 import com.maanraj514.database.GameDataDatabase;
+import com.maanraj514.setupwizard.WizardManager;
 import com.maanraj514.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ public final class BridgePlugin extends Okmeta {
     private final SlimePlugin slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
     private GameDataDatabase gameDataDatabase;
+    private WizardManager wizardManager;
 
     @Override
     public void enable() {
@@ -45,6 +47,7 @@ public final class BridgePlugin extends Okmeta {
 
     public void registerClasses() {
         gameDataDatabase = new GameDataDatabase(this);
+        wizardManager = new WizardManager();
         new GameManager(this);
     }
 
@@ -62,5 +65,9 @@ public final class BridgePlugin extends Okmeta {
 
     public GameDataDatabase getGameDataDatabase() {
         return gameDataDatabase;
+    }
+
+    public WizardManager getWizardManager() {
+        return wizardManager;
     }
 }

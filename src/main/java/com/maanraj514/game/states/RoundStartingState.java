@@ -2,6 +2,9 @@ package com.maanraj514.game.states;
 
 import com.maanraj514.BridgePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 public class RoundStartingState extends GameState{
@@ -26,6 +29,14 @@ public class RoundStartingState extends GameState{
         if (task != null){
             task.cancel();
             task = null;
+        }
+    }
+
+    @EventHandler
+    private void onMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (game.getPlayers().containsKey(player.getUniqueId())) {
+            event.setCancelled(true);
         }
     }
 }

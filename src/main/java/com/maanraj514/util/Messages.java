@@ -15,7 +15,9 @@ public class Messages {
     public static String ERROR_GAME_STATE_LOADING = color("&cGAME IS STILL LOADING");
     public static String ERROR_GAME_STATE_ENDED = color("&cGAME HAS ENDED");
     public static String ERROR_GAME_STATE_ROUND_STARTING = color("&cGAME IS BEING USED!");
-    public static String ERROR_GAME_PLAYER_NOT_FOUND = color("&cPLAYER NOT FOUND");
+    public static String ERROR_PLAYER_TEAM_NOT_FOUND = color("&cPLAYER'S TEAM NOT FOUND");
+    public static String ERROR_PLAYER_NOT_FOUND = color("&cPLAYER NOT FOUND");
+    public static String ERROR_WORLD_NOT_FOUND = color("&cWORLD NOT FOUND");
     public static String ERROR_GAME_FULL = color("&cGAME IS FULL");
     public static String ERROR_SLIME_PLUGIN_NULL = color("&cSLIMEWORLDMANAGAER DOES NOT EXIST");
     public static String ERROR_SLIME_ERROR = color("&cSLIMEWORLDMANAGAER ERROR");

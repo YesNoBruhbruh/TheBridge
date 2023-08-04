@@ -15,6 +15,14 @@ public class Team {
     private final Location portalLocationTwo;
     private final Color color;
 
+    public Team(String name, Location spawnLocation, Location portalLocationOne, Location portalLocationTwo, Color color) {
+        this.name = name;
+        this.spawnLocation = spawnLocation;
+        this.portalLocationOne = portalLocationOne;
+        this.portalLocationTwo = portalLocationTwo;
+        this.color = color;
+    }
+
     public Team(ConfigurationSection section){
         this.name = section.getString("name");
         this.spawnLocation = LocationUtil.stringToLocation(Objects.requireNonNull(section.getString("spawnLocation")));

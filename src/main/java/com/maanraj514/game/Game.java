@@ -29,7 +29,7 @@ public class Game {
     private final Map<UUID, Team> players;
     private final Map<Team, Set<UUID>> teams;
     private final Set<UUID> spectators;
-    private Map<Team, Integer> score;
+    private final Map<Team, Integer> score;
 
     private final Map<UUID, FastBoard> scoreboards;
 
@@ -42,10 +42,9 @@ public class Game {
 
     private Team winnerTeam;
 
-    public Game(String map, GameMode gameMode, UUID uuid, BridgePlugin plugin){
+    public Game(String map, UUID uuid, BridgePlugin plugin){
         this.plugin = plugin;
         this.map = map;
-        this.gameMode = gameMode;
         this.uuid = uuid;
         this.players = new HashMap<>();
         this.teams = new HashMap<>();
@@ -61,6 +60,7 @@ public class Game {
         },0, 20));
 
         this.gameData = plugin.getGameDataDatabase().getData(this.map);
+        this.gameMode = this.gameData.getGameMode();
 
         WorldUtil.loadGameWorld(this, plugin);
     }
@@ -92,7 +92,35 @@ public class Game {
 
         this.scoreboards.put(player.getUniqueId(), board);
 
-        //TODO do the algorithm for checking add the player to the teams
+        for (Team team : this.gameData.getTeams()){
+            // first we can check if the team already exists.
+            if (this.teams.containsKey(team)){
+                // this means the team exists.
+                if (this.teams.get(team).size() < this.gameMode.getPlayersPerTeam()) {
+                    // this means the team's size is still less than the gameMode's players per team.
+                    // add them to the existing team.
+                    this.teams.get(team).add(player.getUniqueId());
+                    this.players.put(player.getUniqueId(), team);
+                    Bukkit.getPlayer(player.getName() + " got assigned to " + team.getColor());
+                    break;
+                } else if (this.teams.get(team).size() == this.gameMode.getPlayersPerTeam()) {
+                    // this means the team's size is equal to the gameMode's players per team.
+                    // create a new team.
+                    this.teams.put(team, new HashSet<>());
+                    this.teams.get(team).add(player.getUniqueId());
+                    this.players.put(player.getUniqueId(), team);
+                    Bukkit.getPlayer(player.getName() + " got assigned to " + team.getColor());
+                    break;
+                }
+            } else {
+                // create a new team because one doesn't exist yet.
+                this.teams.put(team, new HashSet<>());
+                this.teams.get(team).add(player.getUniqueId());
+                this.players.put(player.getUniqueId(), team);
+                Bukkit.getPlayer(player.getName() + " got assigned to " + team.getColor());
+                break;
+            }
+        }
 
         this.assignSpawnLocation(player);
 
@@ -104,6 +132,12 @@ public class Game {
     }
 
     public void addParty(Party party){
+        // for now we just use addPlayer()
+        for (UUID playerUUID : party.getOnlinePlayers()){
+            if (Bukkit.getPlayer(playerUUID) != null){
+                addPlayer(Bukkit.getPlayer(playerUUID));
+            }
+        }
         //TODO
     }
 
@@ -149,11 +183,11 @@ public class Game {
     }
 
     public void assignSpawnLocation(Player player){
-        if (this.players.get(player.getUniqueId()) == null){
-            player.sendMessage(Messages.ERROR_GAME_PLAYER_NOT_FOUND);
+        Team team = this.players.get(player.getUniqueId());
+        if (team == null){
+            player.sendMessage(Messages.ERROR_PLAYER_TEAM_NOT_FOUND);
             return;
         }
-        Team team = this.players.get(player.getUniqueId());
         player.teleportAsync(team.getSpawnLocation());
     }
 
@@ -188,7 +222,10 @@ public class Game {
 
     public List<String> getLines(){
         List<String> lines = new ArrayList<>();
+        lines.add("");
         lines.add(color("&a&lTest Line"));
+        lines.add("");
+
         //TODO
         // check which state it is and put lines based on it.
         return lines;
