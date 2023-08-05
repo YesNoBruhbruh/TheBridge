@@ -2,13 +2,13 @@ package com.maanraj514.database;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.model.GameData;
 import com.maanraj514.model.Team;
 import com.maanraj514.utils.FileUtil;
 import com.maanraj514.util.Messages;
 import com.maanraj514.utils.LocationUtil;
+import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -39,21 +39,6 @@ public class GameDataDatabase {
 
     public void saveData(GameData gameData) throws IOException {
 
-//        ConfigFile configFile = new ConfigFile(gameDataFolder, gameData.getMap(), plugin);
-//
-//        configFile.getConfig().set("map", gameData.getMap());
-//        configFile.getConfig().set("gameMode", gameData.getGameMode().toString());
-//        configFile.getConfig().set("authors", gameData.getAuthors());
-//        configFile.getConfig().set("lastEdit", gameData.getLastEdit());
-//        for (Team team : gameData.getTeams()) {
-//            configFile.getConfig().set(team.getName() + ".color", team.getColor().toString());
-//        }
-//        configFile.getConfig().set("spectatorSpawn", gameData.getSpectatorSpawn());
-//        configFile.getConfig().set("buildAbleCornerOne", gameData.getBuildAbleCornerOne());
-//        configFile.getConfig().set("buildAbleCornerTwo", gameData.getBuildAbleCornerTwo());
-//
-//        configFile.reload();
-
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         File file = new File(gameDataFolder.getAbsolutePath() + "/" + gameData.getMap() + ".json");
         file.getParentFile().mkdir();
@@ -65,16 +50,20 @@ public class GameDataDatabase {
         toJson.add(gameData.getGameMode().toString());
         toJson.addAll(gameData.getAuthors());
         toJson.add(gameData.getLastEdit() + "");
-        for (Team team : gameData.getTeams()) {
-            if (team.getName() == null){
-                toJson.add(team.getColor().name());
-            } else {
-                toJson.add(team.getName());
-            }
-        }
         toJson.add("spectatorSpawn: " + LocationUtil.locationToString(gameData.getSpectatorSpawn(), true));
         toJson.add("buildAbleCornerOne: " + LocationUtil.locationToString(gameData.getBuildAbleCornerOne(), false));
         toJson.add("buildAbleCornerTwo: " + LocationUtil.locationToString(gameData.getBuildAbleCornerTwo(), false));
+
+        for (Team team : gameData.getTeams()) {
+            List<String> teamToJson = new ArrayList<>();
+
+            if (team.getName() == null){
+                teamToJson.add(team.getColor().name());
+            } else {
+                teamToJson.add(team.getName());
+            }
+
+        }
 
         gson.toJson(toJson, writer);
         writer.flush();
@@ -123,23 +112,6 @@ public class GameDataDatabase {
             plugin.getLogger().info(Messages.NULL);
             return;
         }
-
-//        for (File file : files) {
-//            if (file.exists()) {
-//                if (!file.isDirectory()){
-//                    ConfigFile configFile = new ConfigFile(gameDataFolder, file.getName(), plugin);
-//
-//                    String map = configFile.getConfig().getString("map");
-//                    GameMode gameMode = GameMode.valueOf(configFile.getConfig().getString("gameMode").toUpperCase());
-//                    List<String> authors = configFile.getConfig().getStringList("authors");
-//                    long lastEdit = configFile.getConfig().getLong("lastEdit");
-//                    List<Team> teams = new ArrayList<>();
-//                    // check how its saved first.
-//
-////                    GameData gameData = new GameData();
-//                }
-//            }
-//        }
 
 //        Gson gson = new Gson();
 //        for (File file : files){
