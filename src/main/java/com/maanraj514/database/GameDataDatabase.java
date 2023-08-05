@@ -63,6 +63,7 @@ public class GameDataDatabase {
                 teamToJson.add(team.getName());
             }
 
+            gson.toJson(teamToJson, writer);
         }
 
         gson.toJson(toJson, writer);
