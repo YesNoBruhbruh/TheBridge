@@ -2,20 +2,18 @@ package com.maanraj514.setupwizard;
 
 import com.maanraj514.BridgePlugin;
 import com.maanraj514.game.GameMode;
+import com.maanraj514.menu.MenuManager;
 import com.maanraj514.model.GameData;
 import com.maanraj514.model.Team;
 import com.maanraj514.setupwizard.menu.ConfirmExitMenu;
 import com.maanraj514.setupwizard.menu.WizardMenu;
 import com.maanraj514.util.Messages;
 import com.maanraj514.util.WorldUtil;
-import com.maanraj514.utils.ColorUtil;
 import com.maanraj514.utils.Hologram;
 import com.maanraj514.utils.ItemBuilder;
 import com.maanraj514.utils.MessageUtil;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -37,15 +35,28 @@ public class Session {
     private final Map<ChatColor, Team> teams;
     private final List<Hologram> holograms;
 
+    private final NamespacedKey openGuiKey;
+    private final NamespacedKey centerXZKey;
+    private final NamespacedKey centerYawPitchKey;
+    private final NamespacedKey exitWizardKey;
+
+    private final List<UUID> inTeamNameChangeSession;
+
     public Session(UUID playerUUID, String map, GameMode gameMode, BridgePlugin plugin) {
         this.plugin = plugin;
         this.playerUUID = playerUUID;
         this.gameMode = gameMode;
         this.holograms = new ArrayList<>();
         this.teams = new HashMap<>();
+        this.inTeamNameChangeSession = new ArrayList<>();
+
+        this.openGuiKey = new NamespacedKey(plugin, "openGui");
+        this.centerXZKey = new NamespacedKey(plugin, "centerXZ");
+        this.centerYawPitchKey = new NamespacedKey(plugin, "centerYawPitch");
+        this.exitWizardKey = new NamespacedKey(plugin, "exitWizard");
 
         Player player = Bukkit.getPlayer(playerUUID);
-        if (player != null){
+        if (player != null) {
             MessageUtil.sendMessageWithLines("&bCreating session for " + player.getName(),
                     player,
                     "&e--------------------",
@@ -54,9 +65,9 @@ public class Session {
             this.gameData = new GameData(
                     map,
                     gameMode,
-                    Arrays.asList("Maanraj514"),
+                    List.of("Maanraj514"),
                     System.currentTimeMillis(),
-                    new HashMap<>(),
+                    new ArrayList<>(),
                     null,
                     null,
                     null
@@ -64,7 +75,7 @@ public class Session {
 
             player.getInventory().clear();
 
-            if (!WorldUtil.worldExists(map, plugin)){
+            if (!WorldUtil.worldExists(map, plugin)) {
                 player.sendMessage(Messages.ERROR_WORLD_NOT_FOUND);
                 plugin.getWizardManager().endSession(player, false);
                 return;
@@ -77,25 +88,25 @@ public class Session {
 
                 ItemStack guiItem = new ItemBuilder(Material.COMPASS).setName("&6Open Gui")
                         .applyPersistentData(persistentDataContainer ->
-                                persistentDataContainer.set(new NamespacedKey(plugin, "openGui"),
+                                persistentDataContainer.set(openGuiKey,
                                         PersistentDataType.BOOLEAN, true))
                         .build();
 
                 ItemStack centerXZItem = new ItemBuilder(Material.ARROW).setName("&6Center X-Z")
                         .applyPersistentData(persistentDataContainer ->
-                                persistentDataContainer.set(new NamespacedKey(plugin, "centerXZ"),
+                                persistentDataContainer.set(centerXZKey,
                                         PersistentDataType.BOOLEAN, true))
                         .build();
 
                 ItemStack centerYawPitchItem = new ItemBuilder(Material.ARROW).setName("&6Center Yaw-Pitch")
                         .applyPersistentData(persistentDataContainer ->
-                                persistentDataContainer.set(new NamespacedKey(plugin, "centerYawPitch"),
+                                persistentDataContainer.set(centerYawPitchKey,
                                         PersistentDataType.BOOLEAN, true))
                         .build();
 
                 ItemStack exitItem = new ItemBuilder(Material.BARRIER).setName("&cExit Wizard")
                         .applyPersistentData(persistentDataContainer ->
-                                persistentDataContainer.set(new NamespacedKey(plugin, "exitWizard"),
+                                persistentDataContainer.set(exitWizardKey,
                                         PersistentDataType.BOOLEAN, true))
                         .build();
 
@@ -115,22 +126,22 @@ public class Session {
     public void onInteract(ItemStack itemStack) {
         Player player = Bukkit.getPlayer(playerUUID);
 
-        if (player == null){
+        if (player == null) {
             return;
         }
 
-        if (itemStack.getItemMeta() != null){
+        if (itemStack.getItemMeta() != null) {
 
-            if (itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "openGui"))){
-                new WizardMenu(this);
-            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "exitWizard"))){
-                new ConfirmExitMenu(player);
-            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "centerXZ"))){
+            if (itemStack.getItemMeta().getPersistentDataContainer().has(openGuiKey)) {
+                MenuManager.openMenu(WizardMenu.class, player);
+            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(exitWizardKey)) {
+                MenuManager.openMenu(ConfirmExitMenu.class, player);
+            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(centerXZKey)) {
                 Location newLoc1 = player.getLocation();
                 newLoc1.setX(newLoc1.getBlockX() + 0.5);
                 newLoc1.setZ(newLoc1.getBlockZ() + 0.5);
                 player.teleportAsync(newLoc1);
-            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "centerYawPitch"))){
+            } else if (itemStack.getItemMeta().getPersistentDataContainer().has(centerYawPitchKey)) {
                 Location newLoc2 = player.getLocation();
 
                 // Calculate the centered yaw angle
@@ -147,24 +158,26 @@ public class Session {
         }
     }
 
-    public void delete(boolean save){
+    public void delete(boolean save) {
         Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null){
+        if (player == null) {
             return;
         }
         player.getInventory().clear();
         player.teleportAsync(plugin.getLobbyLocation());
 
-        for(Hologram hologram : holograms){
+        for (Hologram hologram : holograms) {
             hologram.destroy();
         }
 
         WorldUtil.unloadWorld(gameData.getMap());
 
-        if(save){
+        if (save) {
             gameData.setLastEdit(System.currentTimeMillis());
-            gameData.setTeams(this.teams);
-            try{
+            for (Team team : this.teams.values()) {
+                gameData.getTeams().add(team);
+            }
+            try {
                 plugin.getGameDataDatabase().saveData(gameData);
             } catch (IOException e) {
                 plugin.getLogger().info(Messages.ERROR_IO);
@@ -186,18 +199,24 @@ public class Session {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null) return;
 
+        // this is for just in case we happen to make a hologram where they set the team's spawn.
+        for (Hologram hologram : this.holograms) {
+            if (hologram.getText().equalsIgnoreCase(color(team.getColor() + "Team " + team.getName()))) {
+                hologram.destroy();
+            }
+        }
+
         this.teams.remove(team.getColor());
         MessageUtil.sendTitle(team.getColor() + "Team Removed!", "", 0, 20, 0, player);
     }
 
-    public void setBuildAbleCornerOne(){
+    public void setBuildAbleCornerOne() {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null) return;
 
         for (Hologram hologram : this.holograms) {
-            if (hologram.getText().equalsIgnoreCase(color("&6Buildable Corner One"))){
+            if (hologram.getText().equalsIgnoreCase(color("&6Buildable Corner One"))) {
                 hologram.destroy();
-                break;
             }
         }
 
@@ -211,9 +230,8 @@ public class Session {
         if (player == null) return;
 
         for (Hologram hologram : this.holograms) {
-            if (hologram.getText().equalsIgnoreCase(color("&6Buildable Corner Two"))){
+            if (hologram.getText().equalsIgnoreCase(color("&6Buildable Corner Two"))) {
                 hologram.destroy();
-                break;
             }
         }
 
@@ -222,14 +240,13 @@ public class Session {
         MessageUtil.sendTitle("Buildable Corner Two Set!", "", 0, 20, 0, player);
     }
 
-    public void setSpectatorSpawn(){
+    public void setSpectatorSpawn() {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null) return;
 
         for (Hologram hologram : this.holograms) {
-            if (hologram.getText().equalsIgnoreCase(color("&6Spectator"))){
+            if (hologram.getText().equalsIgnoreCase(color("&6Spectator"))) {
                 hologram.destroy();
-                break;
             }
         }
 
@@ -244,5 +261,9 @@ public class Session {
 
     public Map<ChatColor, Team> getTeams() {
         return teams;
+    }
+
+    public List<UUID> getInTeamNameChangeSession() {
+        return inTeamNameChangeSession;
     }
 }

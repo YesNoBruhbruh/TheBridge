@@ -17,14 +17,14 @@ public class GameData {
 
     private long lastEdit;
 
-    private Map<ChatColor, Team> teams;
+    private List<Team> teams;
 
     private Location spectatorSpawn;
 
     private Location buildAbleCornerOne;
     private Location buildAbleCornerTwo;
 
-    public GameData(String map, GameMode gameMode, List<String> authors, long lastEdit, Map<ChatColor, Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
+    public GameData(String map, GameMode gameMode, List<String> authors, long lastEdit, List<Team> teams, Location spectatorSpawn, Location buildAbleCornerOne, Location buildAbleCornerTwo) {
         this.map = map;
         this.gameMode = gameMode;
         this.authors = authors;
@@ -59,7 +59,7 @@ public class GameData {
         return lastEdit;
     }
 
-    public Map<ChatColor, Team> getTeams() {
+    public List<Team> getTeams() {
         return teams;
     }
 
@@ -83,7 +83,7 @@ public class GameData {
         this.buildAbleCornerTwo = buildAbleCornerTwo;
     }
 
-    public void setTeams(Map<ChatColor, Team> teams) {
+    public void setTeams(List<Team> teams) {
         this.teams = teams;
     }
 }

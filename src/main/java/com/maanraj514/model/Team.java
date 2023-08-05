@@ -11,7 +11,8 @@ public class Team {
     private Location portalLocationTwo;
     private ChatColor color;
 
-    public Team() {
+    public Team(ChatColor color) {
+        this.color = color;
     }
 
     public Team(String name, Location spawnLocation, Location portalLocationOne, Location portalLocationTwo, ChatColor color) {

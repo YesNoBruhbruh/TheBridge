@@ -1,16 +1,18 @@
 package com.maanraj514.setupwizard;
 
 import com.maanraj514.BridgePlugin;
-import com.maanraj514.setupwizard.menu.ConfirmExitMenu;
-import com.maanraj514.setupwizard.menu.TeamMenu;
-import com.maanraj514.setupwizard.menu.WizardMenu;
-import org.bukkit.Material;
+import com.maanraj514.menu.MenuManager;
+import com.maanraj514.menu.PlayerMenuUtility;
+import com.maanraj514.model.Team;
+import com.maanraj514.setupwizard.menu.PMUData;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.InventoryHolder;
+
+import static com.maanraj514.utils.ColorUtil.color;
 
 public class WizardListener implements Listener {
 
@@ -31,19 +33,17 @@ public class WizardListener implements Listener {
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent event){
-        if(event.getCurrentItem() != null && !(event.getCurrentItem().getType().equals(Material.AIR))){
-            InventoryHolder holder = event.getInventory().getHolder();
-
-            if(holder instanceof WizardMenu){
+    public void onMessage(AsyncPlayerChatEvent event){
+        Player player = event.getPlayer();
+        if (plugin.getWizardManager().hasSession(player.getUniqueId())) {
+            Session session = plugin.getWizardManager().getSession(player.getUniqueId());
+            if (session.getInTeamNameChangeSession().contains(player.getUniqueId())) {
                 event.setCancelled(true);
-                ((WizardMenu) holder).handleClick(event);
-            } else if(holder instanceof ConfirmExitMenu){
-                event.setCancelled(true);
-                ((ConfirmExitMenu) holder).handleClick(event, plugin);
-            } else if(holder instanceof TeamMenu) {
-                event.setCancelled(true);
-                ((TeamMenu) holder).handleClick(event);
+                PlayerMenuUtility playerMenuUtility = MenuManager.getPlayerMenuUtility(player);
+                Team team = session.getTeams().get(playerMenuUtility.getData(PMUData.TEAM_SELECTED, ChatColor.class));
+                team.setName(event.getMessage());
+                player.sendMessage(color("&aTeam name has been set to " + event.getMessage()));
+                session.getInTeamNameChangeSession().remove(player.getUniqueId());
             }
         }
     }
