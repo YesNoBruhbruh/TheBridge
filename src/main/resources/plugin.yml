@@ -2,3 +2,18 @@ name: TheBridge
 version: '${project.version}'
 main: com.maanraj514.BridgePlugin
 api-version: '1.20'
+depend:
+  - SlimeWorldManager
+commands:
+  setup:
+    usage: /setup
+    description: Setup the a game
+  join:
+    usage: /join <map>
+    description: Join a game
+  party:
+    usage: /party
+    description: party command
+  world:
+    usage: /world
+    description: world command
