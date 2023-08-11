@@ -3,7 +3,9 @@ package com.maanraj514.game;
 public enum GameMode {
 
     DUELS(1, 2, 2),
-    SOLO_THREE_TEAMS(1, 3, 3);
+    DUOS_TWO_TEAMS(2, 4, 3),
+    SOLO_THREE_TEAMS(1, 3, 3),
+    SOLO_EIGHT_TEAMS(1, 8, 8);
 
     private final int playersPerTeam;
     private final int maxPlayers;

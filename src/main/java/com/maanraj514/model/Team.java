@@ -17,6 +17,15 @@ public class Team {
         this.color = color;
     }
 
+    public Team(Team team) {
+        this.name = team.name;
+        this.spawnLocation = team.spawnLocation;
+        this.portalLocationOne = team.portalLocationOne;
+        this.portalLocationTwo = team.portalLocationTwo;
+        this.color = team.color;
+        this.armorColor = team.armorColor;
+    }
+
     public Team(String name, Location spawnLocation, Pos portalLocationOne, Pos portalLocationTwo, ChatColor color, Color armorColor) {
         this.name = name;
         this.spawnLocation = spawnLocation;

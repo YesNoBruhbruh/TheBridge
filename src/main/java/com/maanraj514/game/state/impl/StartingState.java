@@ -5,8 +5,11 @@ import com.maanraj514.game.state.GameState;
 import com.maanraj514.game.state.GameStateImpl;
 import com.maanraj514.game.state.GameStateListener;
 import com.maanraj514.game.state.impl.listeners.PreGameListener;
+import com.maanraj514.model.Pos;
 import com.maanraj514.model.Team;
+import com.maanraj514.utils.LocationUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -52,6 +55,15 @@ public class StartingState extends GameStateImpl {
                 game.getScore().put(team, 0);
             }
         }
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            // get all teams in game and set portal block
+            for (Team team : game.getTeams().keySet()){
+                for (Pos portalBlockLocation : LocationUtil.posFromTwoPoints(team.getPortalLocationOne(), team.getPortalLocationTwo())) {
+                    LocationUtil.posToLocation(portalBlockLocation, game.getWorld()).getBlock().setType(Material.END_PORTAL);
+                }
+            }
+        });
     }
 
     @Override

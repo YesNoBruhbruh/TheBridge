@@ -135,7 +135,7 @@ public class Game {
             // first we can check if the team already exists.
             if (this.teams.containsKey(team)){
                 // this means the team exists.
-                int teamSize = this.teams.get(team).size() + 1;
+                int teamSize = this.teams.get(team).size();
                 if (teamSize < this.gameMode.getPlayersPerTeam()) {
                     // this means the team's size is still less than the gameMode's players per team.
                     // add them to the existing team.
@@ -146,9 +146,21 @@ public class Game {
                 } else if (teamSize == this.gameMode.getPlayersPerTeam()) {
                     // this means the team's size is equal to the gameMode's players per team.
                     // create a new team.
-                    this.teams.put(team, new HashSet<>());
-                    this.teams.get(team).add(player.getUniqueId());
-                    this.players.put(player.getUniqueId(), team);
+                    Team teamToAssign = null;
+                    for (Team newTeam : this.gameData.getTeams()) {
+                        if (!newTeam.equals(team)){
+                            teamToAssign = newTeam;
+                            break;
+                        }
+                    }
+                    if (teamToAssign == null){
+                        player.sendMessage(color("&cYou cannot join because no more teams are available!"));
+                        return;
+                    }
+                    this.teams.put(teamToAssign, new HashSet<>());
+                    this.teams.get(teamToAssign).add(player.getUniqueId());
+                    this.players.put(player.getUniqueId(), teamToAssign);
+                    plugin.getLogger().info(teamToAssign.getName() + teamToAssign.getColor() + " 2");
                     Bukkit.getLogger().info(player.getName() + " got assigned to new team because of existing team being full " + team.getColor());
                     break;
                 }
