@@ -75,13 +75,18 @@ public class GameDataDatabase {
 
     public GameData getData(String map){
         if (this.gameDataMap.isEmpty()){
+            System.out.println("test1");
             return null;
         }
         for (String map1 : this.gameDataMap.keySet()){
             if (map1.equalsIgnoreCase(map)){
+                System.out.println("test2");
                 return this.gameDataMap.get(map1);
+            } else {
+                System.out.println("map asked for " + map + " what was in gameDataMap " + map1);
             }
         }
+        System.out.println("testw3");
         return null;
     }
 

@@ -52,14 +52,6 @@
                     </relocations>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <outputDirectory>D:\servers\1.20.1 slime paper server\plugins</outputDirectory>
-                </configuration>
-            </plugin>
         </plugins>
         <resources>
             <resource>
